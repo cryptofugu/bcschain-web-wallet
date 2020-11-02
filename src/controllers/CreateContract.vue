@@ -6,7 +6,7 @@
     <v-card-text>
       <v-form>
         <v-text-field
-          label="Byte Code"
+          v-bind:label="$t('create_contract.byte_code')"
           v-model.trim="code"
           multiLine
           required
@@ -14,17 +14,17 @@
         <a href="https://ethereum.github.io/browser-solidity/" target="_blank"
            style="float: right;">{{ $t('create_contract.compiler') }}</a>
         <v-text-field
-          label="Gas Price (1e-8 QTUM/gas)"
+          v-bind:label="$t('create_contract.gas_price')"
           v-model.trim="gasPrice"
           required
         ></v-text-field>
         <v-text-field
-          label="Gas Limit"
+          v-bind:label="$t('create_contract.gas_limit')"
           v-model.trim="gasLimit"
           required
         ></v-text-field>
         <v-text-field
-          label="Fee"
+          v-bind:label="$t('create_contract.fee')"
           v-model.trim="fee"
           required
         ></v-text-field>
@@ -115,9 +115,9 @@
           this.sending = false
           if (res.txId) {
             const txViewUrl = server.currentNode().getTxExplorerUrl(res.txId)
-            this.$root.success(`Successful send. You can view at <a href="${txViewUrl}" target="_blank">${txViewUrl}</a>`, true, 0)
+            this.$root.success(this.$t('warning.successfull_send_you_can_view_tx', {n: txViewUrl}), true, 0)
           } else {
-            this.$root.error(`Send Failed : ${res.message}`, true, 0)
+            this.$root.error(this.$t('warning.send_failed', {n: res.message}), true, 0)
           }
           this.$emit('send')
         } catch (e) {

@@ -28,7 +28,7 @@ export default {
       }
     })
     if (locale === undefined) {
-      locale = 'en'
+      locale = 'ru'
     }
     return locale
   },

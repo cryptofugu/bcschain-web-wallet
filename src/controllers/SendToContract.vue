@@ -6,12 +6,12 @@
     <v-card-text>
       <v-form>
         <v-text-field
-          label="Contract Address"
+          :label="$t('call_contract.contract_address')"
           v-model.trim="contractAddress"
           required
         ></v-text-field>
         <v-text-field
-          label="ABI"
+          :label="$t('call_contract.abi')"
           v-model.trim="abi"
           required
           multiLine
@@ -34,17 +34,17 @@
           ></v-text-field>
         </template>
         <v-text-field
-          label="Gas Price (1e-8 QTUM/gas)"
+          :label="$t('create_contract.gas_price')"
           v-model.trim="gasPrice"
           required
         ></v-text-field>
         <v-text-field
-          label="Gas Limit"
+          :label="$t('create_contract.gas_limit')"
           v-model.trim="gasLimit"
           required
         ></v-text-field>
         <v-text-field
-          label="Fee"
+          :label="$t('create_contract.fee')"
           v-model.trim="fee"
           required
           ></v-text-field>
@@ -133,7 +133,9 @@ export default {
         const abiJson = JSON.parse(this.abi)
         this.parsedAbi = []
         for (let i = 0; i < abiJson.length; i++) {
-          this.parsedAbi[i] = {text: abiJson[i]['name'], value: i, info: abiJson[i]}
+          // 过滤 constructor & event
+          if (abiJson[i].type === 'constructor' || abiJson[i].type === 'event') continue
+          this.parsedAbi.push({text: abiJson[i]['name'], value: i, info: abiJson[i]})
         }
       } catch (e) {
         this.$root.log.error('send_to_contract_decode_abi_error', e.stack || e.toString() || e)
@@ -154,7 +156,7 @@ export default {
         }
         this.canSend = true
       } catch (e) {
-        this.$root.error('Params error')
+        this.$root.error('params_error')
         this.$root.log.error('send_to_contract_encode_abi_error', e.stack || e.toString() || e)
         this.confirmSendDialog = false
         return false
@@ -169,9 +171,9 @@ export default {
         this.sending = false
         if (res.txId) {
           const txViewUrl = server.currentNode().getTxExplorerUrl(res.txId)
-          this.$root.success(`Successful send. You can view at <a href="${txViewUrl}" target="_blank">${txViewUrl}</a>`, true, 0)
+          this.$root.success(this.$t('warning.successfull_send_you_can_view_tx', {n: txViewUrl}), true, 0)
         } else {
-          this.$root.error(`Send Failed : ${res.message}`, true, 0)
+          this.$root.error(this.$t('warning.send_failed', {n: res.message}), true, 0)
         }
         this.$emit('send')
       } catch (e) {

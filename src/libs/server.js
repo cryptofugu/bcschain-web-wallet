@@ -1,12 +1,12 @@
 import insight from 'libs/nodes/insight'
-import qtumInfo from 'libs/nodes/qtumInfo'
+import bcsInfo from 'libs/nodes/bcsInfo'
 
 let nodeConfigs = {
   insight,
-  qtumInfo
+  bcsInfo
 }
 
-const defaultNodeId = 'qtumInfo'
+const defaultNodeId = 'bcsInfo'
 let currentNodeId = defaultNodeId
 
 export default {

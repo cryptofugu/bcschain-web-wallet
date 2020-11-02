@@ -7,7 +7,8 @@ export default {
     next: 'NEXT',
     question_mark: '? ',
     testnet: 'Testnet',
-    mainnet: 'Ignition-Mainnet',
+    mainnet: 'Mainnet',
+	wallet: 'Web Wallet',
     menu: {
       create: 'Generate new Wallet',
       create_from_mnemonic: 'Create From Mnemonic',
@@ -26,6 +27,7 @@ export default {
       create_contract: 'Create Contract',
       send_to_contract: 'Send To Contract',
       call_contract: 'Call Contract',
+      delegation: 'Offline Staking',
       settings: 'Settings',
     },
     info: {
@@ -33,6 +35,15 @@ export default {
       balance: 'Balance',
       unconfirmed_balance: 'Unconfirmed Balance',
       priv_key: 'Private Key',
+<<<<<<< HEAD
+	  tokens: 'Tokens',
+=======
+      staker_address: 'Staker Address',
+      fee: 'Staker Fee',
+      gas_limit: 'Gas Limit',
+      gas_price: 'Gas Price',
+      tx_fee: 'Fee'
+>>>>>>> e7f2ba83e4def2a595df0480bddba0ba67791219
     },
     notify: {
       success: 'Success',
@@ -52,6 +63,10 @@ export default {
       restore_key_file_fail: 'Restore from key file failed. Maybe the password is not correct',
       connect_ledger_fail: 'Fail to connect Ledger. Please re-plugin your ledger and try again',
       token_contract_address_is_not_exists: 'Token contract address is not exists, please confirm and try again',
+	  params_error: 'Params Error',
+	  copy_success: 'Copy succeeded',
+	  copy_fail: 'Copy failed',
+	  password_is_required: 'Password is required'
     },
     mode: {
       normal: 'Normal',
@@ -87,6 +102,9 @@ export default {
     next_10: 'Next 10 Address',
   },
   safe_send: {
+	step1_title: 'Generate Base Info (At online computer)',
+	step2_title: 'Generate Tx (At offline computer)',
+	step3_title: 'Broadcast Tx (At online computer)',
     title: 'Safe Send',
     from_address: 'From Address',
     to_address: 'To Address',
@@ -106,15 +124,25 @@ export default {
     going_to_send: 'You are going to send ',
     to_address: 'to address ',
     token_address: 'Token Contract Address',
+	address: 'Address',
+	amount: 'Amount',
+	gas_price: 'Gas Price (1e-8 BCS/gas)',
+	gas_limit: 'Gas Limit',
+	fee: 'Fee',
+	token: 'Token',
+	more: 'More...'
   },
   request_payment: {
     title: 'Request Payment',
+	address: 'Address',
+	amount: 'Amount',
+	message: 'Message'
   },
   create_token: {
     title: 'Create Token',
     name: 'Token Name',
     symbol: 'Token Symbol',
-    decimal: 'Decimals (It\'s recommended to set decimals to 8 in QTUM)',
+    decimal: 'Decimals (It\'s recommended to set decimals to 8 in BCS)',
     total_supply: 'Total Supply (UNIT: 1 Token)',
     confirm: 'Do you confirm to create this Token?',
   },
@@ -122,6 +150,10 @@ export default {
     title: 'Create Contract',
     confirm: 'Do you confirm to publish this contract?',
     compiler: 'Compiler',
+	byte_code: 'Byte Code',
+	gas_price: 'Gas Price (1e-8 BCS/gas)',
+	gas_limit: 'Gas Limit',
+	fee: 'Fee'
   },
   send_to_contract: {
     title: 'Send To Contract',
@@ -130,6 +162,8 @@ export default {
   call_contract: {
     title: 'Call Contract',
     result: 'Result',
+	contract_address: 'Contract Address',
+	abi: 'ABI'
   },
   create: {
     title: 'Generate new Wallet',
@@ -156,8 +190,8 @@ export default {
   },
   restore_ledger: {
     title: 'Restore From Ledger',
-    usage: 'Please ensure your firmware and app are the newest version. Plugin your Ledger, open Qtum APP, and then click the "CONNECT" button below try to connect.',
-    download: 'No Qtum APP? Please install it follow this https://www.ledgerwallet.com/apps/manager',
+    usage: 'Please ensure your firmware and app are the newest version. Plugin your Ledger, open BCS APP, and then click the "CONNECT" button below try to connect.',
+    download: 'No BCS APP? Please install it follow this https://www.ledgerwallet.com/apps/manager',
     connect: 'CONNECT',
   },
   view: {
@@ -182,6 +216,8 @@ export default {
     lan: 'Language',
     network: 'Network',
     mode: 'Mode',
+	log: 'LOG',
+	download_logs: 'DOWNLOAD LOGS'
   },
   warning: {
     title: 'Warning',
@@ -192,6 +228,23 @@ export default {
       'Please make sure to keep an updated antivirus and operating system.',
       'Please keep your private keys PRIVATE, do not give them to anyone.',
       'If you use Restore from Mnemonic, the seed words and password must be exactly right or the wallet will create a new address. When using Restore from Mnemonic, confirm you have the correct address.',
+<<<<<<< HEAD
+    ],
+	successfull_send_you_can_view_tx: 'Successful send. You can view at <a href="{n}" target="_blank">{n}</a>',
+	send_failed: 'Send Failed : {n}'
+=======
     ]
+  },
+  delegation: {
+    title: 'Offline Staking',
+    add: 'Add Delegation',
+    remove: 'Remove Delegation',
+    contract_success: 'Contract send successfully.',
+    delegated: 'Address has been delegated.',
+    refresh_success: 'Refresh successfully',
+    address: 'Address: {address}',
+    super_staker: 'Super Staker: {superStaker}',
+    processing: 'The contract is being processed.'
+>>>>>>> e7f2ba83e4def2a595df0480bddba0ba67791219
   }
 }

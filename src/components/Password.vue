@@ -16,7 +16,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="blue--text darken-1" flat @click="confirmPassword">{{ $t('common.confirm') }}</v-btn>
+          <v-btn class="darken-1" flat @click="confirmPassword">{{ $t('common.confirm') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -45,7 +45,7 @@ export default {
     confirmPassword() {
       const password = this.password
       if (this.notEmpty && this.password === '') {
-        this.$root.error('password is_required')
+        this.$root.error('password_is_required')
         return false
       }
       this.$emit('password', password)

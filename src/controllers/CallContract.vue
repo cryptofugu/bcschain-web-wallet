@@ -5,18 +5,21 @@
     </v-card-title>
     <v-card-text>
       <v-form>
+        <!-- 合约地址 input -->
         <v-text-field
-          label="Contract Address"
+          v-bind:label="$t('call_contract.contract_address')"
           v-model.trim="contractAddress"
           required
         ></v-text-field>
+        <!-- 合约 ABI -->
         <v-text-field
-          label="ABI"
+          v-bind:label="$t('call_contract.abi')"
           v-model.trim="abi"
           required
           multiLine
           @input="decodeAbi"
         ></v-text-field>
+        <!-- 合约方法选择 -->
         <v-select
           v-if="parsedAbi"
           :items="parsedAbi"
@@ -25,6 +28,7 @@
           single-line
           bottom
         ></v-select>
+        <!-- 合约参数 -->
         <template v-if="params">
           <v-text-field
             v-for="(param, index) in params"
@@ -35,6 +39,7 @@
         </template>
       </v-form>
     </v-card-text>
+    <!-- 合约确认按钮 -->
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn class="success" dark @click="callTo" :disabled="notValid">{{ $t('common.confirm') }}</v-btn>
@@ -108,7 +113,9 @@ export default {
         const abiJson = JSON.parse(this.abi)
         this.parsedAbi = []
         for (let i = 0; i < abiJson.length; i++) {
-          this.parsedAbi[i] = {text: abiJson[i]['name'], value: i, info: abiJson[i]}
+          // 过滤 constructor & event
+          if (abiJson[i].type === 'constructor' || abiJson[i].type === 'event') continue
+          this.parsedAbi.push({text: abiJson[i]['name'], value: i, info: abiJson[i]})
         }
       } catch (e) {
         this.$root.log.error('call_contract_decode_abi_error', e.stack || e.toString() || e)
@@ -127,7 +134,7 @@ export default {
           this.execResultDialog = false
         }
       } catch (e) {
-        this.$root.error('Params error')
+        this.$root.error('params_error')
         this.$root.log.error('call_contract_encode_abi_error', e.stack || e.toString() || e)
         return false
       }

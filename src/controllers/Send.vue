@@ -6,14 +6,14 @@
     <v-card-text>
       <v-form>
         <v-text-field
-          label="Address"
+          :label="$t('send.address')"
           v-model.trim="address"
           required
         ></v-text-field>
         <v-layout>
           <v-flex xs9>
             <v-text-field
-              label="Amount"
+              :label="$t('send.amount')"
               v-model.trim="amount"
               required
             ></v-text-field>
@@ -38,17 +38,17 @@
           </v-flex>
         </v-layout>
         <v-text-field
-          v-if="symbol !== 'QTUM'"
-          label="Gas Price (1e-8 QTUM/gas)"
+          v-if="symbol !== 'BCS'"
+          :label="$t('send.gas_price')"
           v-model="gasPrice"
         ></v-text-field>
         <v-text-field
-          v-if="symbol !== 'QTUM'"
-          label="Gas Limit"
+          v-if="symbol !== 'BCS'"
+          :label="$t('send.gas_limit')"
           v-model="gasLimit"
         ></v-text-field>
         <v-text-field
-          label="Fee"
+          :label="$t('send.fee')"
           v-model.trim="fee"
           required
         ></v-text-field>
@@ -115,7 +115,7 @@
       <v-card>
         <v-card-title>
           <span class="headline">
-            Token
+            {{ $t('send.token') }}
           </span>
         </v-card-title>
         <v-card-text>
@@ -166,7 +166,7 @@
       return {
         address: '',
         amount: '',
-        symbol: 'QTUM',
+        symbol: 'BCS',
         tokens: [],
         addTokenStep: 1,
         addTokenDialog: false,
@@ -209,7 +209,7 @@
         this.confirmSendDialog = true
         const wallet = webWallet.getWallet()
         try {
-          if (this.symbol == 'QTUM') {
+          if (this.symbol == 'BCS') {
             if (wallet.extend.ledger) {
               this.rawTx = 'Please confirm tx on your ledger...'
             }
@@ -241,9 +241,9 @@
           this.sending = false
           if (res.txId) {
               const txViewUrl = server.currentNode().getTxExplorerUrl(res.txId)
-              this.$root.success(`Successful send. You can view at <a href="${txViewUrl}" target="_blank">${txViewUrl}</a>`, true, 0)
+              this.$root.success(this.$t('warning.successfull_send_you_can_view_tx', {n: txViewUrl}), true, 0)
           } else {
-              this.$root.error(`Send Failed : ${res.message}`, true, 0)
+              this.$root.error(this.$t('warning.send_failed', {n: res.message}), true, 0)
           }
           track.trackAction('done', 'send', this.symbol)
           this.$emit('send')
@@ -288,7 +288,7 @@
       },
 
       initTokens() {
-        const tokenList = [{ text: 'QTUM', value: 'QTUM' }]
+        const tokenList = [{ text: 'BCS', value: 'BCS' }]
         qrc20.getTokenList().forEach((token) => {
           tokenList[tokenList.length] = {
             text: token.symbol,
@@ -297,7 +297,7 @@
             address: token.address
           }
         })
-        tokenList[tokenList.length] = { text: 'More...', value: 'more' }
+        tokenList[tokenList.length] = { text: this.$t('send.more'), value: 'more' }
         this.tokens = tokenList
       }
     },

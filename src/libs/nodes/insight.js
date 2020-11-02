@@ -4,10 +4,10 @@ import config from 'libs/config'
 let domain = ''
 switch (config.getNetwork()) {
   case 'testnet':
-    domain = 'https://testnet.qtum.org'
+    domain = 'https://testnet.bcs.org'
     break
   case 'mainnet':
-    domain = 'https://explorer.qtum.org'
+    domain = 'https://bcswallet.com'
     break
 }
 const apiPrefix = domain + '/insight-api'

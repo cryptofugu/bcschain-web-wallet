@@ -6,7 +6,7 @@
     <v-card-text>
       <v-alert color="info" value="true">{{ $t('safe_send.info') }}</v-alert>
       <v-stepper non-linear vertical v-model="step">
-        <v-stepper-step step="1" editable>Generate Base Info (At online computer)</v-stepper-step>
+        <v-stepper-step step="1" editable>{{ $t('safe_send.step1_title') }}</v-stepper-step>
         <v-stepper-content step="1">
           <template v-if="mode === 'offline'">
             <v-alert color="info" value="true">{{ $t('safe_send.info1_offline') }}</v-alert>
@@ -15,22 +15,22 @@
           <template v-else>
             <v-alert color="info" value="true">{{ $t('safe_send.info1_online') }}</v-alert>
             <v-text-field
-              label="From Address"
+              v-bind:label="$t('safe_send.from_address')"
               v-model.trim="fromAddress"
               required
             ></v-text-field>
             <v-text-field
-              label="To Address"
+              v-bind:label="$t('safe_send.to_address')"
               v-model.trim="toAddress"
               required
             ></v-text-field>
             <v-text-field
-              label="Amount"
+              v-bind:label="$t('safe_send.amount')"
               v-model.trim="amount"
               required
             ></v-text-field>
             <v-text-field
-              label="Fee"
+              v-bind:label="$t('safe_send.fee')"
               v-model.trim="fee"
               required
             ></v-text-field>
@@ -40,7 +40,7 @@
           </template>
         </v-stepper-content>
 
-        <v-stepper-step step="2" editable>Generate Tx (At offline computer)</v-stepper-step>
+        <v-stepper-step step="2" editable>{{ $t('safe_send.step2_title') }}</v-stepper-step>
         <v-stepper-content step="2">
           <template v-if="mode === 'offline'">
             <v-alert color="info" value="true">{{ $t('safe_send.info2_offline') }}</v-alert>
@@ -89,7 +89,7 @@
           </template>
         </v-stepper-content>
 
-        <v-stepper-step step="3" editable>Broadcast Tx (At online computer)</v-stepper-step>
+        <v-stepper-step step="3" editable>{{ $t('safe_send.step3_title') }}</v-stepper-step>
         <v-stepper-content step="3">
           <template v-if="mode === 'offline'">
             <v-alert color="info" value="true">{{ $t('safe_send.info3_offline') }}</v-alert>
@@ -147,7 +147,7 @@
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs12>
-                <v-text-field label="To Address" v-model.trim="repeatToAddress"></v-text-field>
+                <v-text-field :label="$t('safe_send.to_address')" v-model.trim="repeatToAddress"></v-text-field>
               </v-flex>
             </v-layout>
           </v-container>
@@ -166,7 +166,7 @@
         <v-card-title>
           <span class="headline">
             {{ $t('send.going_to_send') }}
-            <v-chip label>{{this.amount}}QTUM</v-chip>
+            <v-chip label>{{this.amount}}BCS</v-chip>
             {{ $t('send.to_address') }}
             <v-chip label>{{this.toAddress}}</v-chip>
             {{ $t('common.question_mark') }}
@@ -309,20 +309,25 @@
           await this.createTxFile()
         }
         else if (this.step === 3) {
-          try {
-            const res = await wallet.sendRawTx(this.rawTx)
-            this.confirmSendDialog = false
-            if (res.txId) {
+          this.sending = true
+        try {
+          const res = await webWallet.getWallet().sendRawTx(this.rawTx)
+          this.confirmSendDialog = false
+          this.sending = false
+          if (res.txId) {
               const txViewUrl = server.currentNode().getTxExplorerUrl(res.txId)
-              this.$root.success(`Successful send. You can view at <a href="${txViewUrl}" target="_blank">${txViewUrl}</a>`, true, 0)
-            } else {
-              this.$root.error(`Send Failed : ${res.message}`, true, 0)
-            }
-          } catch (e) {
-            alert(e.message || e)
-            this.$root.log.error('safe_send_post_raw_tx_error', e.response || e.stack || e.toString() || e)
-            this.confirmSendDialog = false
+              this.$root.success(this.$t('warning.successfull_send_you_can_view_tx', {n: txViewUrl}), true, 0)
+          } else {
+              this.$root.error(this.$t('warning.send_failed', {n: res.message}), true, 0)
           }
+          track.trackAction('done', 'send', this.symbol)
+          this.$emit('send')
+        } catch (e) {
+          alert(e.message || e)
+          this.$root.log.error('send_post_raw_tx_error', e.response || e.stack || e.toString() || e)
+          track.trackException(`send: send_post_raw_tx_error: ${e.response || e.stack || e.toString() || e}`)
+          this.confirmSendDialog = false
+        }
         }
       },
     },

@@ -6,20 +6,20 @@
     <v-card-text>
       <v-form>
         <v-text-field
-          label="Address"
+          :label="$t('request_payment.address')"
           v-model="address"
           required
           disabled
           @input="drawQrCode"
           ></v-text-field>
         <v-text-field
-          label="Amount"
+          :label="$t('request_payment.amount')"
           v-model.trim="amount"
           required
           @input="drawQrCode"
           ></v-text-field>
         <v-text-field
-          label="Message"
+          :label="$t('request_payment.message')"
           v-model="message"
           required
           @input="drawQrCode"
@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     drawQrCode() {
-      qrcode.toDataURL(`qtum:${this.address}?amount=${this.amount}&message=${this.message}`, (err, url) => {
+      qrcode.toDataURL(`bcs:${this.address}?amount=${this.amount}&message=${this.message}`, (err, url) => {
         this.qr = url
       })
     }

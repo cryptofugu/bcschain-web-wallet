@@ -1,18 +1,18 @@
 import axios from 'axios'
 import config from 'libs/config'
 
-// todo change apis to qtum.info
+// todo change apis to bcs.info
 
 let domain = ''
 let insightDomain = ''
 switch (config.getNetwork()) {
   case 'testnet':
-    domain = 'https://testnet.qtum.info'
-    insightDomain = 'https://testnet.qtum.org'
+    domain = 'https://testnet.bcs.info'
+    insightDomain = 'https://testnet.bcs.org'
     break
   case 'mainnet':
-    domain = 'https://qtum.info'
-    insightDomain = 'https://explorer.qtum.org'
+    domain = 'https://bcs.info'
+    insightDomain = 'https://explorer.bcs.org'
     break
 }
 const apiPrefix = domain + '/api'
@@ -31,7 +31,7 @@ export default {
   },
 
   async getTokenInfo(contractAddress) {
-    return await _get(`/contract/${contractAddress}`)
+    return await _get(`/qrc20/${contractAddress}`)
   },
 
   async getTxList(address, size = 10) {
@@ -77,4 +77,8 @@ export default {
   async callContract(address, encodedData) {
     return (await _get(`/contract/${address}/call/?data=${encodedData}`)).executionResult.output
   },
+
+  async getQtumInfo() {
+    return await _get(`/info`)
+  }
 }

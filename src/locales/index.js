@@ -1,16 +1,13 @@
 import en from './en'
-import zh from './zh'
-import ko from './ko'
+import ru from './ru'
 
 const locales = [
   'en',
-  'zh',
-  'ko'
+  'ru'
 ]
 const messages = {
   en,
-  zh,
-  ko
+  ru
 }
 
 export default {

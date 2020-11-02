@@ -26,6 +26,7 @@ export default {
       create_contract: '创建智能合约',
       send_to_contract: '向智能合约发送数据',
       call_contract: '调用智能合约',
+      delegation: '离线挖矿',
       settings: '设置',
     },
     info: {
@@ -33,6 +34,11 @@ export default {
       balance: '余额',
       unconfirmed_balance: '未确认余额',
       priv_key: '私钥',
+      staker_address: '矿工地址',
+      fee: '费用',
+      gas_limit: 'Gas Limit',
+      gas_price: 'Gas Price',
+      tx_fee: '手续费'
     },
     notify: {
       success: '成功',
@@ -114,7 +120,7 @@ export default {
     title: '创建Token',
     name: 'Token名字',
     symbol: 'Token符号',
-    decimal: '小数位数(QTUM推荐8位)',
+    decimal: '小数位数(BCS推荐8位)',
     total_supply: '总量(单位: 1token)',
     confirm: '确定发布此Token吗?',
   },
@@ -156,8 +162,8 @@ export default {
   },
   restore_ledger: {
     title: '从Ledger恢复',
-    usage: '请确保您的固件和软件都是最新的版本。连接您的LedgerWallet，进入Qtum APP，然后点击下面的连接按钮尝试连接。',
-    download: '没有Qtum APP? 请按照这个安装 https://www.ledgerwallet.com/apps/manager',
+    usage: '请确保您的固件和软件都是最新的版本。连接您的LedgerWallet，进入BCS APP，然后点击下面的连接按钮尝试连接。',
+    download: '没有BCS APP? 请按照这个安装 https://www.ledgerwallet.com/apps/manager',
     connect: '连接',
   },
   view: {
@@ -193,5 +199,16 @@ export default {
       '请私下保存您的私钥或助记词，不要告诉任何人。',
       '如果使用了从助记词恢复地址的方式，请保证助记词和密码的绝对正确。输入任意的助记词和密码都会生成地址，如果有细微的不同都可能会导致生成跟原来不同的地址。',
     ]
+  },
+  delegation: {
+    title: '离线挖矿',
+    add: '添加代理',
+    remove: '移除代理',
+    contract_success: '合约发送成功。',
+    delegated: '地址已代理。',
+    refresh_success: '刷新成功',
+    address: '地址：{address}',
+    super_staker: '代理地址：{superStaker}',
+    processing: '合约正在处理。'
   }
 }

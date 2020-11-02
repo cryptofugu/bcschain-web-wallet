@@ -25,6 +25,7 @@ export default {
       create_contract: '컨트랙트 생성',
       send_to_contract: '컨트랙트 보내기',
       call_contract: '콜 컨트랙트',
+      delegation: '오프라인 스테이킹',
       settings: '설정',
     },
     info: {
@@ -32,6 +33,11 @@ export default {
       balance: '잔액',
       unconfirmed_balance: '미확인 잔액',
       priv_key: '개인 키',
+      staker_address: '스테이커 주소',
+      fee: '스테이커 수수료',
+      gas_limit: 'Gas Limit',
+      gas_price: 'Gas Price',
+      tx_fee: ''
     },
     notify: {
       success: '성공',
@@ -147,8 +153,8 @@ export default {
   },
   restore_ledger: {
     title: 'Ledger에서 복원',
-    usage: '펌웨어 및 응용 프로그램이 최신 버전인지 확인하십시오. 귀하의 Ledger를 플러그인하고 Qtum APP을 실행한 다음 아래의 "연결" 버튼을 클릭하여 연결하십시오.',
-    download: 'Qtum APP이 없으신가요? 다음 항목을 설치하십시오 https://www.ledgerwallet.com/apps/manager',
+    usage: '펌웨어 및 응용 프로그램이 최신 버전인지 확인하십시오. 귀하의 Ledger를 플러그인하고 BCS APP을 실행한 다음 아래의 "연결" 버튼을 클릭하여 연결하십시오.',
+    download: 'BCS APP이 없으신가요? 다음 항목을 설치하십시오 https://www.ledgerwallet.com/apps/manager',
     connect: '연결',
   },
   view: {
@@ -184,5 +190,16 @@ export default {
       '개인 키는 누구에게도 제공하지 마십시오.',
       '니모닉에서 복원을 사용하는 경우 시드 단어와 비밀번호가 정확히 맞아야하며 그렇지 않으면 지갑이 새 주소를 만듭니다. 니모닉에서 복원을 사용할 때 정확한 주소를 가지고 있는지 확인하십시오.',
     ]
+  },
+  delegation: {
+    title: '오프라인 스테이킹',
+    add: '위임 추가',
+    remove: '위임 삭제',
+    contract_success: '컨트랙트 내보내기 성공',
+    delegated: '주소 위임 완료',
+    refresh_success: '',
+    address: '',
+    super_staker: '',
+    processing: ''
   }
 }

@@ -43,10 +43,10 @@
             ></v-select>
           </v-flex>
           <v-flex xs6>
-            <v-subheader>LOG</v-subheader>
+            <v-subheader>{{ $t('config.log') }}</v-subheader>
           </v-flex>
           <v-flex xs6>
-            <file-creator color="red" :href="fileStr">DOWNLOAD LOGS</file-creator>
+            <file-creator color="red" :href="fileStr">{{ $t('config.download_logs') }}</file-creator>
           </v-flex>
         </v-layout>
       </v-container>
@@ -74,19 +74,18 @@ export default {
     return {
       lan: loadConfig.lan,
       lanSelect: [
-        { value: 'zh', text: '中文'},
-        { value: 'en', text: 'En'},
-        { value: 'ko', text: '한글'}
+        { value: 'ru', text: 'Русский'},
+        { value: 'en', text: 'English'}
       ],
       network: loadConfig.network,
       networkSelect: [
-        { value: 'testnet', text: this.$t('common.testnet')},
+        //{ value: 'testnet', text: this.$t('common.testnet')},
         { value: 'mainnet', text: this.$t('common.mainnet')},
       ],
       mode: loadConfig.mode,
       modeSelect: [
         { value: 'normal', text: this.$t('common.mode.normal')},
-        { value: 'offline', text: this.$t('common.mode.offline')},
+        //{ value: 'offline', text: this.$t('common.mode.offline')},
       ]
     }
   },

@@ -17,7 +17,7 @@
           ></v-text-field>
         </v-flex>
         <v-flex xs2>
-          <v-btn small class="mt-3" color="cyan" v-clipboard:copy="info[item.name]" v-clipboard:success="onCopySucc" v-clipboard:error="onCopyError" v-if="item.copy">
+          <v-btn small class="mt-3"  v-clipboard:copy="info[item.name]" v-clipboard:success="onCopySucc" v-clipboard:error="onCopyError" v-if="item.copy">
             {{ $t('common.copy') }}
           </v-btn>
         </v-flex>
@@ -38,7 +38,7 @@
           ></v-text-field>
         </v-flex>
         <v-flex xs2>
-          <v-btn small class="mt-3" color="cyan" v-show="showPriv" v-clipboard:copy="privKey" v-clipboard:success="onCopySucc" v-clipboard:error="onCopyError">
+          <v-btn small class="mt-3"  v-show="showPriv" v-clipboard:copy="privKey" v-clipboard:success="onCopySucc" v-clipboard:error="onCopyError">
             {{ $t('common.copy') }}
           </v-btn>
         </v-flex>
@@ -46,7 +46,7 @@
       <v-layout v-if="wallet.info.qrc20.length > 0">
         <v-flex xs3>
           <v-subheader>
-            QRC20
+            {{ $t('common.info.tokens') }}
           </v-subheader>
         </v-flex>
         <v-flex xs7>
@@ -95,10 +95,10 @@ export default {
   methods: {
     onCopySucc: function() {
       track.trackAction('copy', 'view', 'privkey')
-      this.$root.success('copy success')
+      this.$root.success('copy_success')
     },
     onCopyError: function() {
-      this.$root.error('copy fail')
+      this.$root.error('copy_fail')
     }
   }
 }

@@ -1,7 +1,7 @@
 # 设置
 
 
-![](https://s.qtum.site/uploads/8a230e1f76f694881358b9898989cd75.jpg)
+![](https://s.bcs.site/uploads/8a230e1f76f694881358b9898989cd75.jpg)
 
 ## 语言设置
 

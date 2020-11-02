@@ -2,7 +2,7 @@ import tokens from 'libs/token.json'
 import config from 'libs/config'
 import server from 'libs/server'
 import abi from 'ethjs-abi'
-import qtum from 'qtumjs-lib'
+import bcs from 'bcsjs-lib'
 
 function loadTokenList(network) {
   let tokenList = tokens[network].concat(config.get(`tokenList_${network}`, []))
@@ -18,14 +18,13 @@ export default {
   },
 
   addCustomToken(address, name, symbol, decimals) {
-    const tokenList = loadTokenList(config.getNetwork())
-    const has = tokenList.find(item => {
-      return address === item.address
-    })
-    if (has) return true
     const network = config.getNetwork()
+    if (tokens[network].find(item => address === item.address)) {
+      return true
+    }
     const savedTokenList = config.get(`tokenList_${network}`, [])
-    savedTokenList[savedTokenList.length] = {
+    const index = savedTokenList.findIndex(item => address === item.address)
+    savedTokenList[index === -1 ? savedTokenList.length : index] = {
       name,
       symbol,
       address,
@@ -35,11 +34,11 @@ export default {
   },
 
   async fetchTokenInfo(contractAddress) {
-    const res = await server.currentNode().getTokenInfo(contractAddress)
-    if (res.type !== 'qrc20' || !res.qrc20) {
+    try {
+      return await server.currentNode().getTokenInfo(contractAddress)
+    } catch (e) {
       throw 'this contract is not a qrc20 token'
     }
-    return res.qrc20
   },
 
   checkSymbol(symbol) {
@@ -57,6 +56,6 @@ export default {
   },
 
   encodeSendData(token, address, amount) {
-    return 'a9059cbb' + abi.encodeParams(['address', 'uint256'], ['0x' + qtum.address.fromBase58Check(address)['hash'].toString('hex'), amount * Math.pow(10, token.decimals)]).substr(2)
+    return 'a9059cbb' + abi.encodeParams(['address', 'uint256'], ['0x' + bcs.address.fromBase58Check(address)['hash'].toString('hex'), amount * Math.pow(10, token.decimals)]).substr(2)
   }
 }

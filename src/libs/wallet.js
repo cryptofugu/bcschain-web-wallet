@@ -1,20 +1,22 @@
-import qtum from 'qtumjs-lib'
+import bcs from 'bcsjs-lib'
 import bip39 from 'bip39'
 import abi from 'ethjs-abi'
+import secp256k1 from 'secp256k1'
 import BigNumber from 'bignumber.js'
 import ledger from 'libs/ledger'
 import server from 'libs/server'
 import config from 'libs/config'
-import buffer from 'buffer'
+import { sha256d } from 'libs/hash'
+import { Buffer } from 'buffer'
 
-const unit = 'QTUM'
+const unit = 'BCS'
 let network = {}
 switch (config.getNetwork()) {
   case 'testnet':
-    network = qtum.networks.qtum_testnet
+    network = bcs.networks.bcs_testnet
     break
   case 'mainnet':
-    network = qtum.networks.qtum
+    network = bcs.networks.bcs
     break
 }
 
@@ -29,6 +31,9 @@ export default class Wallet {
       balance: 'loading',
       unconfirmedBalance: 'loading',
       qrc20: [],
+      superStaker: '',
+      fee: '',
+      delegateStatus: 'none'
     }
     this.txList = []
   }
@@ -65,14 +70,60 @@ export default class Wallet {
     }
   }
 
+  signMessage(message) {
+    const hash = sha256d(Buffer.concat([
+      Buffer.from(this.keyPair.network.messagePrefix, 'utf8'),
+      Buffer.from([message.length]),
+      Buffer.from(message, 'utf8')
+    ]))
+    const { signature, recovery } = secp256k1.sign(hash, this.keyPair.d.toBuffer())
+    return Buffer.concat([
+      Buffer.from([recovery + (this.keyPair.compressed ? 31 : 27)]),
+      signature
+    ])
+  }
+
   async setInfo() {
     const info = await server.currentNode().getInfo(this.info.address)
-    this.info.balance = Wallet.changeUnitFromSatTo1(info.balance) + unit
+    this.info.balance = Wallet.changeUnitFromSatTo1(info.balanceSat) + unit
     this.info.unconfirmedBalance = Wallet.changeUnitFromSatTo1(info.unconfirmed) + unit
     this.info.qrc20 = info.qrc20Balances.map(token => {
       token.balance = Wallet.changeUnitFromSatTo1(token.balance, token.decimals)
       return token
     })
+
+    if (info.superStaker) {
+      switch (this.info.delegateStatus) {
+        case 'delDelegation':
+          this.setDelegation(null, null)
+          break
+        case 'addDelegation':
+        case 'none':
+          this.setDelegation(info.superStaker, info.fee)
+          this.setDelegationStatus('delegated')
+          break
+      }
+    } else {
+      switch (this.info.delegateStatus) {
+        case 'none':
+        case 'addDelegation':
+          break
+        case 'delDelegation':
+          this.setDelegationStatus('none')
+          break
+      }
+    }
+  }
+
+  // 设置代理信息
+  setDelegation(superStaker, fee) {
+    this.info.superStaker = superStaker
+    this.info.fee = fee
+  }
+
+  // 设置代理状态（是否被确认）
+  setDelegationStatus(status) {
+    this.info.delegateStatus = status
   }
 
   async setTxList() {
@@ -118,11 +169,11 @@ export default class Wallet {
       '0x' + new BigNumber(totalSupply1).times(new BigNumber(10).pow(decimal)).toString(16),
     ])
     console.log(encodedParam)
-    return qtum.utils.buildCreateContractTransaction(wallet.keyPair, qrc20TokenCode + encodedParam.substr(2), gasLimit, gasPrice, fee, utxoList)
+    return bcs.utils.buildCreateContractTransaction(wallet.keyPair, qrc20TokenCode + encodedParam.substr(2), gasLimit, gasPrice, fee, utxoList)
   }
 
   static generateCreateContractTx(wallet, code, gasLimit, gasPrice, fee, utxoList) {
-    return qtum.utils.buildCreateContractTransaction(wallet.keyPair, code, gasLimit, gasPrice, fee, utxoList)
+    return bcs.utils.buildCreateContractTransaction(wallet.keyPair, code, gasLimit, gasPrice, fee, utxoList)
   }
 
   static async generateSendToContractTx(wallet, contractAddress, encodedData, gasLimit, gasPrice, fee, utxoList) {
@@ -131,7 +182,7 @@ export default class Wallet {
         return await ledger.generateSendToContractTx(wallet.keyPair, wallet.extend.ledger.ledger, wallet.extend.ledger.path, wallet.info.address, contractAddress, encodedData, gasLimit, gasPrice, fee, utxoList, server.currentNode().fetchRawTx)
       }
     }
-    return qtum.utils.buildSendToContractTransaction(wallet.keyPair, contractAddress, encodedData, gasLimit, gasPrice, fee, utxoList)
+    return bcs.utils.buildSendToContractTransaction(wallet.keyPair, contractAddress, encodedData, gasLimit, gasPrice, fee, utxoList)
   }
 
   static async generateTx(wallet, to, amount, fee, utxoList) {
@@ -140,7 +191,7 @@ export default class Wallet {
         return await ledger.generateTx(wallet.keyPair, wallet.extend.ledger.ledger, wallet.extend.ledger.path, wallet.info.address, to, amount, fee, utxoList, server.currentNode().fetchRawTx)
       }
     }
-    return qtum.utils.buildPubKeyHashTransaction(wallet.keyPair, to, amount, fee, utxoList)
+    return bcs.utils.buildPubKeyHashTransaction(wallet.keyPair, to, amount, fee, utxoList)
   }
 
   static async sendRawTx(tx) {
@@ -158,7 +209,7 @@ export default class Wallet {
   static restoreFromMnemonic(mnemonic, password) {
     //if (bip39.validateMnemonic(mnemonic) == false) return false
     const seedHex = bip39.mnemonicToSeedHex(mnemonic, password)
-    const hdNode = qtum.HDNode.fromSeedHex(seedHex, network)
+    const hdNode = bcs.HDNode.fromSeedHex(seedHex, network)
     const account = hdNode.deriveHardened(88).deriveHardened(0).deriveHardened(0)
     const keyPair = account.keyPair
     return new Wallet(keyPair)
@@ -166,7 +217,7 @@ export default class Wallet {
 
   static restoreFromMobile(mnemonic) {
     const seedHex = bip39.mnemonicToSeedHex(mnemonic)
-    const hdNode = qtum.HDNode.fromSeedHex(seedHex, network)
+    const hdNode = bcs.HDNode.fromSeedHex(seedHex, network)
     const account = hdNode.deriveHardened(88).deriveHardened(0)
     const walletList = []
     for (let i = 0; i < 10; i++) {
@@ -181,14 +232,21 @@ export default class Wallet {
   }
 
   static restoreFromWif(wif) {
-    return new Wallet(qtum.ECPair.fromWIF(wif, network))
+    return new Wallet(bcs.ECPair.fromWIF(wif, network))
   }
 
   static async restoreHdNodeFromLedgerPath(ledger, path) {
+<<<<<<< HEAD
+    const res = await ledger.bcs.getWalletPublicKey(path)
+    const compressed = ledger.bcs.compressPublicKey(buffer.Buffer.from(res['publicKey'], 'hex'))
+    const keyPair = new bcs.ECPair.fromPublicKeyBuffer(compressed, network)
+    const hdNode = new bcs.HDNode(keyPair, buffer.Buffer.from(res['chainCode'], 'hex'))
+=======
     const res = await ledger.qtum.getWalletPublicKey(path)
-    const compressed = ledger.qtum.compressPublicKey(buffer.Buffer.from(res['publicKey'], 'hex'))
+    const compressed = ledger.qtum.compressPublicKey(Buffer.from(res['publicKey'], 'hex'))
     const keyPair = new qtum.ECPair.fromPublicKeyBuffer(compressed, network)
-    const hdNode = new qtum.HDNode(keyPair, buffer.Buffer.from(res['chainCode'], 'hex'))
+    const hdNode = new qtum.HDNode(keyPair, Buffer.from(res['chainCode'], 'hex'))
+>>>>>>> e7f2ba83e4def2a595df0480bddba0ba67791219
     hdNode.extend = {
       ledger: {
         ledger,

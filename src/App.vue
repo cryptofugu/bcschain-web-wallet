@@ -9,7 +9,7 @@
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
             <v-list-tile-content>
-              <v-list-tile-title class="grey--text">
+              <v-list-tile-title>
                 {{ $t('common.menu.' + item.name) }}
               </v-list-tile-title>
             </v-list-tile-content>
@@ -19,11 +19,11 @@
     </v-navigation-drawer>
     <v-toolbar :class="headerClass" app fixed clipped-left>
       <span class="title">
-        <i class="qtum-icon qtum-icon-logo"></i>
-        <span class="text">QTUM</span>
-        <span @click="changeView('settings')">
+        <i class="bcs-icon bcs-icon-logo"></i>
+        <span class="text">BCS {{ $t('common.wallet') }}</span>
+        <!--<span @click="changeView('settings')">
           --{{ $t('common.' + network) }}
-        </span>
+        </span>-->
         <v-btn flat @click="changeView('settings')" v-if="mode !== 'normal'">
           {{ $t('common.mode.' + mode) }}
         </v-btn>
@@ -51,6 +51,7 @@
               <create-contract v-if="isCurrent['create_contract']"></create-contract>
               <send-to-contract v-if="isCurrent['send_to_contract']"></send-to-contract>
               <call-contract v-if="isCurrent['call_contract']"></call-contract>
+              <delegation :view="isCurrent['delegation']" v-if="isCurrent['delegation']"></delegation>
               <config v-if="isCurrent['settings']"></config>
             </v-flex>
           </v-layout>
@@ -87,11 +88,14 @@ import CreateContract from 'controllers/CreateContract'
 import SendToContract from 'controllers/SendToContract.vue'
 import CallContract from 'controllers/CallContract.vue'
 import Config from 'controllers/Config'
+import Delegation from 'controllers/Delegation'
 
 import config from 'libs/config'
 import webWallet from 'libs/web-wallet'
 import i18n from 'libs/i18n'
 import track from 'libs/track'
+
+import qtumInfo from 'libs/nodes/qtumInfo'
 
 const log = createLog({
   maxLogSizeInBytes: 500 * 1024 // 500KB
@@ -111,10 +115,12 @@ export default {
         { icon: 'add', name: 'create' },
         { icon: 'assignment', name: 'create_from_mnemonic' },
         { icon: 'sms', name: 'restore_from_mnemonic' },
-        { icon: 'create', name: 'restore_from_wif' },
+        { icon: 'vpn_key', name: 'restore_from_wif' },
         { icon: 'phonelink_lock', name: 'restore_from_mobile' },
         { icon: 'cloud_upload', name: 'restore_from_key_file' },
         { icon: 'flip_to_front', name: 'restore_from_ledger' },
+        { divider: true, name: 'stake' },
+        { icon: 'gavel', name: 'delegation' },
         { divider: true, name: 'wallet' },
         { icon: 'account_balance_wallet', name: 'view' },
         { icon: 'list', name: 'transactions' },
@@ -124,13 +130,14 @@ export default {
         { icon: 'cloud_download', name: 'dump_as_key_file' },
         { divider: true, name: 'contract' },
         { icon: 'copyright', name: 'create_token' },
-        { icon: 'gavel', name: 'create_contract' },
+        { icon: 'create', name: 'create_contract' },
         { icon: 'publish', name: 'send_to_contract' },
         { icon: 'play_circle_filled', name: 'call_contract' },
         { divider: true, name: 'disc' },
         { icon: 'settings', name: 'settings' },
       ],
-      notifyList: {}
+      notifyList: {},
+      delegationShow: false
     }
   },
   computed: {
@@ -139,11 +146,13 @@ export default {
     },
     notShow() {
       return {
-        restore_from_ledger: this.network !== 'mainnet',
+        restore_from_ledger: this.network === 'mainnet',
+		//restore_from_mobile: this.network === 'mainnet',
         view: this.mode === 'offline' || !this.wallet,
         transactions: this.mode === 'offline' || !this.wallet,
         wallet: this.mode === 'offline' && !this.wallet,
-        safe_send: this.mode === 'offline' && !this.wallet,
+        //safe_send: this.mode === 'offline' && !this.wallet,
+		safe_send: this.mode === 'normal',
         send: this.mode === 'offline' || !this.wallet,
         request_payment: !this.wallet,
         dump_as_key_file: !this.wallet || !this.wallet.getHasPrivKey(),
@@ -152,10 +161,18 @@ export default {
         create_contract: this.mode === 'offline' || !this.wallet,
         send_to_contract: this.mode === 'offline' || !this.wallet,
         call_contract: this.mode === 'offline' || !this.wallet,
+        stake: this.mode === 'offline' || !this.wallet,
+        delegation: this.mode === 'offline' || !this.wallet || !this.delegationShow,
       }
     },
     headerClass() {
-      return this.mode === 'normal' ? 'cyan' : 'orange'
+      return this.mode === 'normal' ? 'normal' : 'offline'
+    }
+  },
+  watch: {
+    async network(newVal) {
+      this.delegationShow = false
+      await this.onlineDelegation(newVal)
     }
   },
   components: {
@@ -179,6 +196,7 @@ export default {
     SendToContract,
     CallContract,
     Config,
+    Delegation
   },
   methods: {
     setWallet() {
@@ -224,10 +242,33 @@ export default {
           Vue.delete(this.notifyList, notifyId)
         }, ttl * 1000)
       }
+    },
+    async onlineDelegation(network) {
+      // 判断代理挖矿功能是否上线
+      if (localStorage.getItem(`${network}_delegation_online`)) {
+        this.delegationShow = true
+      } else {
+        let height = 0
+        switch(network){
+          case 'testnet':
+            height = 625000
+            break
+          case 'mainnet':
+            height = 680000
+            break
+        }
+        // 请求高度
+        const res = await qtumInfo.getQtumInfo()
+        if (res.height > height) {
+          localStorage.setItem(`${network}_delegation_online`, true)
+          this.delegationShow = true
+        }
+      }
     }
   },
   mounted() {
     track.track('lan', config.getLan())
+    this.onlineDelegation(this.network)
   },
 }
 </script>
