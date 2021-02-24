@@ -35,15 +35,12 @@ export default {
       balance: 'Balance',
       unconfirmed_balance: 'Unconfirmed Balance',
       priv_key: 'Private Key',
-<<<<<<< HEAD
-	  tokens: 'Tokens',
-=======
+      tokens: 'Tokens',
       staker_address: 'Staker Address',
       fee: 'Staker Fee',
       gas_limit: 'Gas Limit',
       gas_price: 'Gas Price',
       tx_fee: 'Fee'
->>>>>>> e7f2ba83e4def2a595df0480bddba0ba67791219
     },
     notify: {
       success: 'Success',
@@ -228,12 +225,9 @@ export default {
       'Please make sure to keep an updated antivirus and operating system.',
       'Please keep your private keys PRIVATE, do not give them to anyone.',
       'If you use Restore from Mnemonic, the seed words and password must be exactly right or the wallet will create a new address. When using Restore from Mnemonic, confirm you have the correct address.',
-<<<<<<< HEAD
     ],
 	successfull_send_you_can_view_tx: 'Successful send. You can view at <a href="{n}" target="_blank">{n}</a>',
 	send_failed: 'Send Failed : {n}'
-=======
-    ]
   },
   delegation: {
     title: 'Offline Staking',
@@ -245,6 +239,5 @@ export default {
     address: 'Address: {address}',
     super_staker: 'Super Staker: {superStaker}',
     processing: 'The contract is being processed.'
->>>>>>> e7f2ba83e4def2a595df0480bddba0ba67791219
   }
 }

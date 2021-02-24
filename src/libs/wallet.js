@@ -236,17 +236,11 @@ export default class Wallet {
   }
 
   static async restoreHdNodeFromLedgerPath(ledger, path) {
-<<<<<<< HEAD
+
     const res = await ledger.bcs.getWalletPublicKey(path)
     const compressed = ledger.bcs.compressPublicKey(buffer.Buffer.from(res['publicKey'], 'hex'))
     const keyPair = new bcs.ECPair.fromPublicKeyBuffer(compressed, network)
     const hdNode = new bcs.HDNode(keyPair, buffer.Buffer.from(res['chainCode'], 'hex'))
-=======
-    const res = await ledger.qtum.getWalletPublicKey(path)
-    const compressed = ledger.qtum.compressPublicKey(Buffer.from(res['publicKey'], 'hex'))
-    const keyPair = new qtum.ECPair.fromPublicKeyBuffer(compressed, network)
-    const hdNode = new qtum.HDNode(keyPair, Buffer.from(res['chainCode'], 'hex'))
->>>>>>> e7f2ba83e4def2a595df0480bddba0ba67791219
     hdNode.extend = {
       ledger: {
         ledger,
