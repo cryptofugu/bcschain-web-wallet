@@ -5,7 +5,7 @@ import VueClipboard from 'vue-clipboard2'
 import Vuetify from 'vuetify'
 import App from 'App'
 
-import 'assets/css/vuetify.min.css'
+import 'vuetify/dist/vuetify.min.css'
 import 'assets/less/bcs-icons.less'
 import 'assets/css/material-icons.css'
 import 'assets/css/main.css'
