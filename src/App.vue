@@ -95,7 +95,7 @@ import webWallet from 'libs/web-wallet'
 import i18n from 'libs/i18n'
 import track from 'libs/track'
 
-import bcsInfo from 'libs/nodes/bcsInfo'
+import qtumInfo from 'libs/nodes/qtumInfo'
 
 const log = createLog({
   maxLogSizeInBytes: 500 * 1024 // 500KB
@@ -258,7 +258,7 @@ export default {
             break
         }
         // 请求高度
-        const res = await bcsInfo.getBCSInfo()
+        const res = await qtumInfo.getQtumInfo()
         if (res.height > height) {
           localStorage.setItem(`${network}_delegation_online`, true)
           this.delegationShow = true
